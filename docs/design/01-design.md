@@ -825,7 +825,7 @@ has been updated.
 | Q14 | Machine-readable + PL label row | `,`, decimal point, UTF-8; row 1 = column keys, row 2 = PL label [unit] |
 | D1 | Complete set per load | as in §2.4 |
 | D2, D10, D9, D11, D12 | accepted | — |
-| D4 | "as float" | integral-valued numbers written as `252.0` are **accepted** for `int` metrics and stored exactly as given (`numeric 252.0`); non-integral values (`252.5`) are still rejected. *Interpretation, to be confirmed.* |
+| D4 | Round to int when not a whole number | `int` metrics: a whole number written as `252.0` is accepted and stored as `252`. A non-integral value (`252.5`) is **rounded half-up** to `253`, stored, and reported as a load warning naming the file, the metric and the original value. The original value stays in `source_document.content`. This is a deliberate exception to trap 15 (exact values) for `int` metrics only; the value-comparison test applies the same rounding. Range checks run on the rounded value. |
 | D5 | Creates missing orders, only adds links | order.json creates missing orders (without owner) and adds `order_sample` links; never removes links |
 | D6 | 2 > 1 > 3 | usage error 2; otherwise any rejected document/sample → 1; otherwise unreadable file → 3; warnings → 0 |
 | D7 | File in repository | `metric_labels.pl.psv` + `qcdb import-dictionary --labels pl` |
