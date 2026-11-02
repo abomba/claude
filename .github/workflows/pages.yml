@@ -2,9 +2,8 @@
 # The real API runs inside the job; its responses are recorded and served as static JSON.
 name: Demo (GitHub Pages)
 
+# Manual only: Actions -> "Demo (GitHub Pages)" -> "Run workflow" (choose the branch).
 on:
-  push:
-    branches: [main, "claude/**"]
   workflow_dispatch:
 
 permissions:

@@ -97,7 +97,8 @@ They seed the database `qcdb_e2e` from `fixtures/` (`backend/scripts/seed_fixtur
 
 ### Demo on GitHub Pages
 
-`.github/workflows/pages.yml` runs the real API on the fixture database in the workflow,
+`.github/workflows/pages.yml` (started manually: **Actions → Demo (GitHub Pages) → Run
+workflow**) runs the real API on the fixture database in the workflow,
 records every GET response the dashboard makes while visiting all views
 (`frontend/e2e/demo-record.spec.ts`), and publishes a build in demo mode (hash URLs, read only,
 bioinformatician view, no login) that reads those recorded responses. Filters that were not
