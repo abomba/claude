@@ -839,3 +839,16 @@ The repository is public, so the demo shows only the fictional fixture data.
   read-only demo mode (no login, no edits) and deploys it to Pages.
 * **Stage 5 – Codespaces:** `.devcontainer/` starts the full Compose stack, so "Open in Codespaces"
   gives a working system with login and editing (uses the account's Codespaces quota).
+
+## 15. Implementation notes (stage 2)
+
+* Indexes are defined in the migration only (names as in §2.6); the ORM models omit them, and
+  `tests/test_schema.py` compares tables, columns and constraints.
+* `run_membership.source_sha256` is NULL for the `--run-id` source (no file asserts it).
+* An unreadable per-sample file (sample id taken from its name) skips that sample instead of
+  rejecting it, so it counts as unreadable (exit 3) and a later load of the fixed file creates a
+  normal first version.
+* `qc_check` and `result_version` keep `null` vs absent: `messages`/`data` columns are NULL only
+  when the key is absent.
+* Polish metric labels (D7): `qcdb import-dictionary --labels pl <file>` is implemented; the
+  140-entry `metric_labels.pl.psv` draft is part of stage 4.
