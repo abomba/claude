@@ -27,7 +27,7 @@ qcdb = "qcdb.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-qcdb = ["data/*", "migrations/script.py.mako", "migrations/alembic.ini", "migrations/versions/*.sql"]
+qcdb = ["py.typed", "data/*", "migrations/script.py.mako", "migrations/alembic.ini", "migrations/versions/*.sql"]
 
 [tool.ruff]
 line-length = 100
@@ -43,7 +43,7 @@ ignore = ["S101", "S608", "RUF001", "RUF002", "RUF003", "PT018"]
 [tool.mypy]
 strict = true
 python_version = "3.10"
-files = ["src", "tests"]
+files = ["src", "tests", "scripts"]
 
 [[tool.mypy.overrides]]
 module = ["psycopg.*"]

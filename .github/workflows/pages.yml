@@ -1,0 +1,73 @@
+# Read-only demo of the qcdb dashboard on GitHub Pages, built from the fictional fixtures.
+# The real API runs inside the job; its responses are recorded and served as static JSON.
+name: Demo (GitHub Pages)
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s
+          --health-retries 10
+    env:
+      QCDB_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/qcdb_e2e
+      QCDB_E2E_SERVER: postgresql://postgres:postgres@127.0.0.1:5432
+      QCDB_PYTHON: python
+      QCDB_SEED_PASSWORD: ${{ github.run_id }}-demo-only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install backend
+        run: pip install ./backend
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Record API responses (real API on the fixture database)
+        working-directory: frontend
+        run: QCDB_DEMO_OUT=$RUNNER_TEMP/demo npx playwright test e2e/demo-record.spec.ts
+      - name: Build the demo
+        working-directory: frontend
+        run: |
+          QCDB_DEMO_BASE="/${GITHUB_REPOSITORY#*/}/" npm run build:demo
+          cp -r "$RUNNER_TEMP/demo" dist-demo/demo
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist-demo
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

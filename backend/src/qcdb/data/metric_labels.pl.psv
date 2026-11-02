@@ -1,0 +1,140 @@
+fastp.read_pairs_before_filter|Pary odczytów przed filtracją|
+fastp.read_pairs_after_filter|Pary odczytów po filtracji|
+fastp.bases_before_filter|Zasady przed filtracją|
+fastp.bases_after_filter|Zasady po filtracji|
+fastp.pct_bases_after_filter|% zasad zachowanych po filtracji|
+fastp.read_length|Długość odczytu (surowe)|
+fastp.pct_reads_passed_filter|% odczytów po filtrze|
+fastp.pct_q30_before_filter|% zasad ≥ Q30 (przed filtracją)|
+fastp.pct_q30_after_filter|% zasad ≥ Q30 (po filtracji)|
+fastp.pct_gc_after_filter|% GC (po filtracji)|
+fastp.pct_duplication|% duplikacji|
+fastp.insert_size_peak|Najczęstsza długość insertu|
+fastp.mean_read_length_after_filter|Średnia długość odczytu (po filtracji)|
+fastp.pct_adapter_trimmed_reads|% odczytów z przyciętym adapterem|
+kraken2.n_fragments_total|Fragmenty sklasyfikowane przez Kraken2|
+kraken2.pct_unclassified|% niesklasyfikowanych|
+kraken2.pct_classified|% sklasyfikowanych|
+kraken2.pct_human|% człowiek|
+kraken2.pct_bacteria|% bakterie|
+kraken2.pct_viruses|% wirusy|
+bracken.top_species|Dominujący gatunek (Bracken)|
+bracken.top_species_taxid|Taxid dominującego gatunku (Bracken)|
+bracken.pct_top_species|% dominującego gatunku (Bracken)|
+bracken.second_species|Drugi gatunek (Bracken)|
+bracken.pct_second_species|% drugiego gatunku (Bracken)|
+bracken.n_species_above_1pct|Gatunki powyżej 1%|
+bracken.shannon_index|Indeks różnorodności Shannona|
+sylph.top_species|Dominujący gatunek (sylph-tax)|
+sylph.pct_top_species|% dominującego gatunku (sylph-tax)|
+sylph.pct_top_species_reads|% odczytów dominującego gatunku (sylph-tax)|
+sylph.second_species|Drugi gatunek (sylph-tax)|
+sylph.pct_second_species|% drugiego gatunku (sylph-tax)|
+sylph.n_species|Wykryte gatunki (sylph-tax)|
+sylph.n_species_above_1pct|Gatunki powyżej 1% (sylph-tax)|
+sylph.shannon_index|Indeks Shannona (sylph-tax)|
+sylph.top_genome|Dominujący genom (sylph-tax)|
+sylph.top_genome_ani|ANI dominującego genomu (sylph-tax)|
+sylph.taxonomies_used|Baza taksonomiczna (sylph-tax)|
+sylph.top_genome_coverage|Pokrycie dominującego genomu (sylph-tax)|
+quast.n_contigs|Kontigi (≥ min. długości)|
+quast.n_contigs_all|Kontigi (wszystkie)|
+quast.total_length|Długość całkowita (≥ min. długości)|
+quast.total_length_all|Długość całkowita (wszystkie kontigi)|
+quast.largest_contig|Najdłuższy kontig|
+quast.n50|N50|
+quast.l50|L50|
+quast.pct_gc|% GC (złożenie)|
+quast.n_per_100kbp|Liczba N na 100 kpz|
+seqkit.n_contigs|Kontigi (seqkit)|
+seqkit.total_length|Długość całkowita (seqkit)|
+seqkit.largest_contig|Najdłuższy kontig (seqkit)|
+seqkit.shortest_contig|Najkrótszy kontig (seqkit)|
+seqkit.mean_contig_length|Średnia długość kontigu (seqkit)|
+seqkit.n50|N50 (seqkit)|
+seqkit.l50|L50 (seqkit)|
+seqkit.pct_gc|% GC (seqkit)|
+seqkit.n_bases|Zasady N (seqkit)|
+seqkit.n_per_100kbp|Liczba N na 100 kpz (seqkit)|
+seqkit_contigs.n_contigs|Kontigi (seqkit fx2tab)|
+seqkit_contigs.pct_gc_stdev|Odchylenie standardowe GC między kontigami|
+checkm2.pct_completeness|% kompletności (CheckM2)|
+checkm2.pct_contamination|% zanieczyszczenia (CheckM2)|
+checkm.pct_completeness|% kompletności (CheckM)|
+checkm.pct_contamination|% zanieczyszczenia (CheckM)|
+checkm.pct_strain_heterogeneity|% heterogeniczności szczepów (CheckM)|
+checkm.marker_lineage|Linia markerów (CheckM)|
+mosdepth.reference_length|Długość referencji (mosdepth)|
+mosdepth.n_contigs|Kontigi (mosdepth)|
+mosdepth.aligned_bases|Zmapowane zasady (mosdepth)|
+mosdepth.mean_depth|Średnie pokrycie (mosdepth)|
+mosdepth.max_depth|Maksymalne pokrycie (mosdepth)|
+mosdepth.n_contigs_zero_depth|Kontigi bez pokrycia (mosdepth)|
+mosdepth.pct_bases_ge_1x|% zasad ≥ 1x (mosdepth)|
+mosdepth.pct_bases_ge_10x|% zasad ≥ 10x (mosdepth)|
+mosdepth.pct_bases_ge_20x|% zasad ≥ 20x (mosdepth)|
+mosdepth.pct_bases_ge_30x|% zasad ≥ 30x (mosdepth)|
+mosdepth.pct_bases_ge_50x|% zasad ≥ 50x (mosdepth)|
+mosdepth.pct_bases_ge_100x|% zasad ≥ 100x (mosdepth)|
+chewbbaca.n_loci|Oceniane loci|
+chewbbaca.n_loci_called|Loci z przypisanym allelem|
+chewbbaca.pct_loci_called|% loci z przypisanym allelem|
+chewbbaca.n_exc|EXC (dokładne dopasowanie)|
+chewbbaca.n_inf|INF (nowy allel)|
+chewbbaca.n_lnf|LNF (locus nieznaleziony)|
+chewbbaca.n_plot|PLOT (koniec kontigu)|
+chewbbaca.n_lotsc|LOTSC (kontig krótszy niż locus)|
+chewbbaca.n_niph|NIPH (trafienia paralogiczne)|
+chewbbaca.n_alm|ALM (allel dłuższy niż moda)|
+chewbbaca.n_asm|ASM (allel krótszy niż moda)|
+chewbbaca.n_pama|PAMA (dopasowania paralogiczne)|
+chewbbaca.n_missing|Brakujące loci|
+chewbbaca.n_cds_total|Przewidziane CDS|
+chewbbaca.n_cds_classified|Sklasyfikowane CDS|
+chewbbaca.n_cds_invalid|Nieprawidłowe CDS|
+mlst.scheme|Schemat MLST|
+mlst.sequence_type|Typ sekwencyjny (MLST)|
+mlst.n_alleles_exact|Allele dokładne (MLST)|
+mlst.n_alleles_novel|Allele nowe (MLST)|
+mlst.n_alleles_partial|Allele częściowe (MLST)|
+mlst.n_alleles_missing|Allele brakujące (MLST)|
+mlst.n_alleles_multiple|Allele wielokopijne (MLST)|
+seqsero2.serotype|Serotyp (SeqSero2)|
+seqsero2.antigenic_profile|Profil antygenowy (SeqSero2)|
+seqsero2.o_antigen|Antygen O (SeqSero2)|
+seqsero2.h1_antigen|Antygen H1 (SeqSero2)|
+seqsero2.h2_antigen|Antygen H2 (SeqSero2)|
+seqsero2.predicted_identification|Identyfikacja (SeqSero2)|
+ectyper.serotype|Serotyp (ECTyper)|
+ectyper.o_antigen|Antygen O (ECTyper)|
+ectyper.h_antigen|Antygen H (ECTyper)|
+ectyper.species|Gatunek (ECTyper)|
+ectyper.qc|Flaga typowania (ECTyper)|
+ectyper.n_genes|Geny typujące (ECTyper)|
+ectyper.min_pct_identity|Najniższa identyczność genu (ECTyper)|
+ectyper.min_pct_coverage|Najniższe pokrycie genu (ECTyper)|
+amrfinder.n_amr_genes|Geny AMR|
+amrfinder.n_point_mutations|Mutacje punktowe AMR|
+amrfinder.n_amr_classes|Klasy leków (AMR)|
+amrfinder.n_stress|Geny odpowiedzi na stres|
+amrfinder.n_virulence|Geny wirulencji|
+abricate_plasmidfinder.n_hits|Trafienia PlasmidFinder|
+abricate_plasmidfinder.n_genes|Replikony plazmidowe (PlasmidFinder)|
+abricate_plasmidfinder.n_contigs|Kontigi z trafieniami PlasmidFinder|
+abricate_plasmidfinder.min_pct_identity|Najniższa identyczność (PlasmidFinder)|
+abricate_plasmidfinder.min_pct_coverage|Najniższe pokrycie (PlasmidFinder)|
+abricate_vfdb.n_hits|Trafienia VFDB|
+abricate_vfdb.n_genes|Geny wirulencji (VFDB)|
+abricate_vfdb.n_contigs|Kontigi z trafieniami VFDB|
+abricate_vfdb.min_pct_identity|Najniższa identyczność (VFDB)|
+abricate_vfdb.min_pct_coverage|Najniższe pokrycie (VFDB)|
+abricate_resfinder.n_hits|Trafienia ResFinder|
+abricate_resfinder.n_genes|Geny oporności (ResFinder)|
+abricate_resfinder.n_contigs|Kontigi z trafieniami ResFinder|
+abricate_resfinder.min_pct_identity|Najniższa identyczność (ResFinder)|
+abricate_resfinder.min_pct_coverage|Najniższe pokrycie (ResFinder)|
+abricate_ncbi.n_hits|Trafienia NCBI (ABRicate)|
+abricate_ncbi.n_genes|Geny oporności (NCBI, ABRicate)|
+abricate_ncbi.n_contigs|Kontigi z trafieniami NCBI (ABRicate)|
+abricate_ncbi.min_pct_identity|Najniższa identyczność (NCBI, ABRicate)|
+abricate_ncbi.min_pct_coverage|Najniższe pokrycie (NCBI, ABRicate)|

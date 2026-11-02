@@ -868,3 +868,18 @@ The repository is public, so the demo shows only the fictional fixture data.
   those fields.
 * Outliers use `statistics.quantiles(method="inclusive")` (Tukey fences, n >= 5).
 * `qcdb create-user` reads the password from the terminal (twice) or one line of stdin.
+
+## 17. Implementation notes (stage 4)
+
+* Frontend: Vite, React 19, TypeScript (strict), React Router, Apache ECharts (SVG renderer,
+  Polish locale, loaded only on the trends page). No UI kit; system fonts; nothing from a CDN.
+* Filters live in the URL; the CSV link uses the same query. The table shows the 16 run columns
+  with units (`reads` = pairs × 2; Mb/kb scaling as in run.json `scale`, display only).
+* Sample detail shows the three metric cases distinctly: a value, „brak wartości (null)” with
+  the tool messages, and „nieobecna” (toggle „pokaż nieobecne”).
+* Polish metric labels: `backend/src/qcdb/data/metric_labels.pl.psv` (140 entries, labels only;
+  descriptions fall back to English). Please review the wording.
+* Not built in the UI (API exists): re-linking a result to another biological sample, editing
+  sample fields (admin uses the API), and the audit log view (proposal 1 in §10).
+* Demo (§14): `frontend/e2e/demo-record.spec.ts` records the real API's GET responses; the demo
+  build (`npm run build:demo`) reads them from `demo/<key>.json` with hash routing.

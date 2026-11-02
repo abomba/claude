@@ -124,3 +124,13 @@ def test_label_import(sessions: sessionmaker[Session], tmp_path: Path) -> None:
     unknown = _write(tmp_path, "pl2.psv", "fastp.nope|X|\n")
     with sessions() as s, s.begin(), pytest.raises(DictionaryImportError):
         import_labels(s, unknown, "pl", "test")
+
+
+def test_polish_labels_cover_the_dictionary(sessions: sessionmaker[Session]) -> None:
+    labels = default_dictionary_path().with_name("metric_labels.pl.psv")
+    keys = [line.split("|")[0] for line in labels.read_text(encoding="utf-8").splitlines()]
+    dictionary = parse_dictionary(default_dictionary_path().read_text(encoding="utf-8"))
+    assert keys == [s.key for s in dictionary]
+    with sessions() as s, s.begin():
+        result = import_labels(s, labels, "pl", "test")
+        assert len(result.added) == 140
