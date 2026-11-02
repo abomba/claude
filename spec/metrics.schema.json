@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "metrics.schema.json",
+  "title": "qcmetrics metrics document",
+  "type": "object",
+  "required": ["schema_version", "sample_id", "namespace", "source", "parser", "status", "metrics"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "namespace": {
+      "type": "string",
+      "enum": ["input", "demux", "reads", "composition", "species", "assembly", "characterisation"]
+    },
+    "source": {
+      "type": "object",
+      "required": ["tool", "tool_version"],
+      "additionalProperties": false,
+      "properties": {
+        "tool": { "type": "string", "minLength": 1 },
+        "tool_version": { "type": "string", "minLength": 1 },
+        "database_version": { "type": "string", "minLength": 1,
+                              "description": "version of the tool's reference database, if any" }
+      }
+    },
+    "parser": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "status": { "type": "string", "enum": ["ok", "empty", "skipped", "failed", "missing"] },
+    "messages": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value", "unit"],
+        "additionalProperties": false,
+        "properties": {
+          "value": { "type": ["number", "string", "boolean", "null"] },
+          "unit": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "data": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "ok" } } },
+      "then": { "properties": { "metrics": { "minProperties": 1 } } }
+    },
+    {
+      "if": { "properties": { "status": { "enum": ["skipped", "failed", "missing"] } } },
+      "then": {
+        "required": ["messages"],
+        "properties": {
+          "messages": { "minItems": 1 },
+          "metrics": { "maxProperties": 0 }
+        }
+      }
+    }
+  ]
+}
