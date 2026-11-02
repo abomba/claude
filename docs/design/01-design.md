@@ -532,7 +532,7 @@ qcdb import-dictionary <file>
     No password arguments. The DSN is printed with the password masked.
 
 `import-dictionary`: adds new keys. If an existing key changes its unit, type or range, the import is
-rejected (contract: never redefined). A changed label or description is accepted and audited. A key
+rejected (contract: never redefined). The one exception is widening `int` → `float` (see D4 in §13). A changed label or description is accepted and audited. A key
 missing from the new file is rejected. Re-importing the same file is a no-op. The packaged
 `metric_dictionary.psv` is imported by the `migrate` step of the deployment.
 
@@ -747,7 +747,7 @@ and document:
 | D1 | A new version = the complete set of documents in that load (no merging) | yes |
 | D2 | Sample table as a materialized view refreshed after load / set-current | yes (plain view if Q7 is small) |
 | D3 | Summary column → metric mapping (§2.5), cross-checked against run.json | confirm the `?` rows |
-| D4 | `int` metrics: `151.0` in JSON is not an integer | yes |
+| D4 | `int` metrics and values like `151.0`: superseded, see §13 | — |
 | D5 | order.json creates missing orders (without owner) and links samples; it never re-links a sample already in another order | yes |
 | D6 | Exit-code precedence 2 > 3 > 1 > 0; warnings never change it | yes |
 | D7 | **Polish labels**: a versioned overlay file `metric_labels.pl.psv` (`key\|label\|description`) in the qcdb repo, loaded into `metric_label` by `qcdb import-dictionary --labels pl <file>` (an extra option on the agreed command). Missing translations fall back to the English label, so a new metric still appears. Keys are never renamed. I'll draft PL labels for all 140 entries for your review. Alternative: admins edit labels in the UI. | overlay file |
@@ -825,7 +825,7 @@ has been updated.
 | Q14 | Machine-readable + PL label row | `,`, decimal point, UTF-8; row 1 = column keys, row 2 = PL label [unit] |
 | D1 | Complete set per load | as in §2.4 |
 | D2, D10, D9, D11, D12 | accepted | — |
-| D4 | Round to int when not a whole number | `int` metrics: a whole number written as `252.0` is accepted and stored as `252`. A non-integral value (`252.5`) is **rounded half-up** to `253`, stored, and reported as a load warning naming the file, the metric and the original value. The original value stays in `source_document.content`. This is a deliberate exception to trap 15 (exact values) for `int` metrics only; the value-comparison test applies the same rounding. Range checks run on the rounded value. |
+| D4 | Change the dictionary; round nothing | `fastp.insert_size_peak` changes from `int` to `float` in qcdb's versioned dictionary `backend/src/qcdb/data/metric_dictionary.psv`. `spec/metric_dictionary.psv` stays a verbatim copy of the brief. No value is ever rounded or converted. Other `int` metrics: a whole number (`252` or `252.0`) is accepted and stored exactly as given; a value with a fractional part (`252.5`) rejects the document. `import-dictionary`: widening `int` → `float` is accepted and audited. If a later file (e.g. the upstream qcmetrics dictionary) still says `int` for a key widened here, the wider type is kept and a warning is printed, so the import is not blocked. Every other unit/type/range change is still rejected. |
 | D5 | Creates missing orders, only adds links | order.json creates missing orders (without owner) and adds `order_sample` links; never removes links |
 | D6 | 2 > 1 > 3 | usage error 2; otherwise any rejected document/sample → 1; otherwise unreadable file → 3; warnings → 0 |
 | D7 | File in repository | `metric_labels.pl.psv` + `qcdb import-dictionary --labels pl` |
