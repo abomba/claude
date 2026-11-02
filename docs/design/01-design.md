@@ -500,8 +500,7 @@ qcdb import-dictionary <file>
    * metrics: stage 1 JSON Schema (`spec/metrics.schema.json`, Draft 2020-12), then stage 2
      dictionary checks exactly as in the brief. An unknown key fails with
      `… not in metric dictionary; update it with "qcdb import-dictionary <file>"`. Interpretation
-     to confirm (D4): `int` follows the JSON token, so `151.0` is **not** an int, matching a Python
-     `isinstance(v, int)` check. A known tool with a different namespace than the table in the brief →
+     see D4 in §13: no rounding; an `int` metric accepts whole numbers (`252`, `252.0`) stored as given and rejects fractional values. A known tool with a different namespace than the table in the brief →
      error; an unknown tool → accepted if its metrics are in the dictionary.
    * qc: `spec/qc.schema.json`.
    * report/run/order: only the fields we read, checked against the outlines.
