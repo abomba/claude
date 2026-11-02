@@ -1,0 +1,3 @@
+sample_id,run_id,run_date,material_type,collection_site,collection_date,expected_species,order_id
+260630_5156,RUN_2606,2026-06-30,izolat,Zakład Przykładowy,2026-06-20,Salmonella enterica,ZL/2026/001
+260630_5158,RUN_2606,,izolat,,2026-06-22,Escherichia coli,ZL/2026/002

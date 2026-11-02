@@ -1,0 +1,1 @@
+{"schema_version":"1.0","sample_id":"260630_5158","namespace":"assembly","source":{"tool":"quast","tool_version":"5.2.0"},"parser":{"name":"qcmetrics","version":"1.0.0"},"status":"failed","messages":["QUAST exited with status 1"],"inputs":[{"path":"260630_5158.quast.out","sha256":"4a480f4d2526ce4cdac2d5d66b5334b2713d82a23d5c7b76410b986f09d815e4"}],"metrics":{},"data":{}}
