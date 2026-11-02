@@ -829,3 +829,13 @@ has been updated.
 | D6 | 2 > 1 > 3 | usage error 2; otherwise any rejected document/sample → 1; otherwise unreadable file → 3; warnings → 0 |
 | D7 | File in repository | `metric_labels.pl.psv` + `qcdb import-dictionary --labels pl` |
 | D8 | Paths masked to basename for viewer | as proposed |
+
+## 14. Demo on GitHub (approved 2026-11-02)
+
+The repository is public, so the demo shows only the fictional fixture data.
+
+* **Stage 4 – GitHub Pages:** a workflow starts PostgreSQL, loads the fixtures with the real loader,
+  runs the real API, and saves its responses as static JSON. It then builds the real frontend in
+  read-only demo mode (no login, no edits) and deploys it to Pages.
+* **Stage 5 – Codespaces:** `.devcontainer/` starts the full Compose stack, so "Open in Codespaces"
+  gives a working system with login and editing (uses the account's Codespaces quota).
