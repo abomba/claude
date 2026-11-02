@@ -4,7 +4,7 @@ PostgreSQL database, loader and (from stage 3/4) web dashboard for per-sample ba
 results produced by the lab's Nextflow pipeline. The design is in
 [`docs/design/01-design.md`](docs/design/01-design.md).
 
-Status: **stage 2 (database and loader)**. API, dashboard and deployment follow in stages 3–5.
+Status: **stage 3 (API and authentication)**. Dashboard and deployment follow in stages 4–5.
 
 ## Layout
 
@@ -43,6 +43,27 @@ never printed.
 `--metadata` takes a CSV/TSV with `sample_id` and optional `run_id`, `run_date`, `order_id` and
 one column per configured sample field (`material_type`, `collection_site`, `collection_date`,
 `expected_species` initially). Empty cells change nothing.
+
+## API (development)
+
+```bash
+cd backend
+.venv/bin/qcdb create-user admin --role admin        # password from the terminal or stdin
+QCDB_COOKIE_SECURE=false .venv/bin/uvicorn --factory qcdb.api.app:create_app --no-access-log
+```
+
+* OpenAPI: `GET /api/v1/openapi.json`, committed as `backend/openapi.json`
+  (`python -m qcdb.api.openapi > openapi.json`; a test fails when it is stale). Swagger UI is
+  disabled because it loads assets from a CDN.
+* Login: `POST /api/v1/auth/login` sets an HttpOnly, Secure, SameSite=Strict session cookie and
+  returns a CSRF token; send it as `X-CSRF-Token` on POST/PUT/PATCH/DELETE.
+* `QCDB_COOKIE_SECURE=false` only for local HTTP development. Other settings:
+  `QCDB_SESSION_IDLE_MINUTES` (480), `QCDB_LOGIN_MAX_FAILURES` (5), `QCDB_LOGIN_LOCK_MINUTES` (15).
+* Roles: `viewer` reads results without owner e-mail, raw `data`/`inputs`, file names, `meta` and
+  server paths (tool messages have paths shortened to file names); `bioinformatician` also edits
+  owners, orders, samples, run dates and current versions; `admin` also manages users, sample
+  fields, erasure and the audit log.
+* Access logs contain method, path, status and duration only (no query strings, no bodies).
 
 ## Tests
 

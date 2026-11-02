@@ -852,3 +852,19 @@ The repository is public, so the demo shows only the fictional fixture data.
   when the key is absent.
 * Polish metric labels (D7): `qcdb import-dictionary --labels pl <file>` is implemented; the
   140-entry `metric_labels.pl.psv` draft is part of stage 4.
+
+## 16. Implementation notes (stage 3)
+
+* Endpoints as in §4, plus: `PUT /results/{id}/sample` (re-link a result to a biological sample,
+  Q9), `GET/POST/PATCH /sample-fields` (configurable metadata, Q2; admin), and
+  `GET /results/{id}/versions/{no}`. The full list is in `backend/openapi.json`.
+* `viewer` responses use separate models: owner `email`, order `meta` and the result
+  `version.technical` block are absent, not null. `sylph.taxonomies_used` is technical.
+* CSRF is checked before the role, so a viewer's write without a token gets 403 either way.
+* Failed logins: after 5 failures the account is locked for 15 minutes; the response is always
+  the same 401 (no account enumeration). Changing a user's role or deactivating ends their
+  sessions.
+* Owner erasure clears name and e-mail; the audit log only ever records "changed"/"erased" for
+  those fields.
+* Outliers use `statistics.quantiles(method="inclusive")` (Tukey fences, n >= 5).
+* `qcdb create-user` reads the password from the terminal (twice) or one line of stdin.

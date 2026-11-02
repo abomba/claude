@@ -60,6 +60,16 @@ def _parser() -> argparse.ArgumentParser:
         metavar="LANG",
         help="import a 'key|label|description' translation file for LANG (e.g. pl)",
     )
+
+    user = sub.add_parser(
+        "create-user",
+        help="create or reset a web user (password read from the terminal or stdin)",
+    )
+    user.add_argument("username")
+    user.add_argument("--role", required=True, choices=["admin", "bioinformatician", "viewer"])
+    user.add_argument(
+        "--reset-password", action="store_true", help="set a new password for an existing user"
+    )
     return parser
 
 
@@ -80,6 +90,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         with session:
             if args.command == "load":
                 return _load(session, args)
+            if args.command == "create-user":
+                return _create_user(session, args)
             return _import(session, args)
     except OperationalError as exc:
         print(
@@ -136,6 +148,60 @@ def _import(session: Session, args: argparse.Namespace) -> int:
         )
     for warning in result.warnings:
         print(f"WARN {warning}")
+    return EXIT_OK
+
+
+def _read_password() -> str | None:
+    if sys.stdin.isatty():
+        first = getpass.getpass("Password: ")
+        if getpass.getpass("Repeat password: ") != first:
+            print("qcdb: passwords do not match", file=sys.stderr)
+            return None
+        return first
+    return sys.stdin.readline().rstrip("\n")
+
+
+def _create_user(session: Session, args: argparse.Namespace) -> int:
+    from sqlalchemy import select
+
+    from qcdb.api.security import MIN_PASSWORD_LENGTH, hash_password
+    from qcdb.db.models import AppUser, AuditLog, UserSession
+
+    password = _read_password()
+    if password is None:
+        return EXIT_USAGE
+    if len(password) < MIN_PASSWORD_LENGTH:
+        print(
+            f"qcdb: password must have at least {MIN_PASSWORD_LENGTH} characters", file=sys.stderr
+        )
+        return EXIT_USAGE
+    with session.begin():
+        user = session.scalar(select(AppUser).where(AppUser.username == args.username))
+        if user is not None and not args.reset_password:
+            print(f"qcdb: user {args.username!r} exists (use --reset-password)", file=sys.stderr)
+            return EXIT_USAGE
+        if user is None:
+            user = AppUser(
+                username=args.username, role=args.role, password_hash=hash_password(password)
+            )
+            session.add(user)
+            action = "create"
+        else:
+            user.password_hash, user.role = hash_password(password), args.role
+            user.failed_logins, user.locked_until, user.is_active = 0, None, True
+            session.query(UserSession).filter(UserSession.user_id == user.id).delete()
+            action = "password"
+        session.flush()
+        session.add(
+            AuditLog(
+                actor_label=f"cli:{_actor()}",
+                action=action,
+                entity_type="app_user",
+                entity_id=str(user.id),
+                changes={"username": user.username, "role": user.role},
+            )
+        )
+    print(f"user {args.username!r} ({args.role}) {'created' if action == 'create' else 'updated'}")
     return EXIT_OK
 
 

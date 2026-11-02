@@ -78,3 +78,19 @@ def test_password_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setenv("QCDB_DATABASE_URL", "postgresql://qcdb@db/qcdb")
     monkeypatch.setenv("QCDB_DATABASE_PASSWORD_FILE", str(secret))
     assert database_url().password == "from-file"
+
+
+def test_create_user(
+    env: URL, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import io
+
+    monkeypatch.setattr("sys.stdin", io.StringIO("a-long-password-1\n"))
+    assert main(["create-user", "alice", "--role", "admin"]) == 0
+    monkeypatch.setattr("sys.stdin", io.StringIO("a-long-password-1\n"))
+    assert main(["create-user", "alice", "--role", "admin"]) == 2  # exists
+    monkeypatch.setattr("sys.stdin", io.StringIO("short\n"))
+    assert main(["create-user", "bob", "--role", "viewer"]) == 2
+    monkeypatch.setattr("sys.stdin", io.StringIO("another-password-2\n"))
+    assert main(["create-user", "alice", "--role", "viewer", "--reset-password"]) == 0
+    assert "a-long-password" not in capsys.readouterr().out

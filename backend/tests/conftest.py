@@ -25,6 +25,8 @@ from qcdb.db.migrate import upgrade
 from qcdb.dictionary import default_dictionary_path, import_dictionary
 from qcdb.loader.core import LoadOptions, LoadReport, load_directory
 
+pytest_plugins = ["tests.api_support"]
+
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
 
 
