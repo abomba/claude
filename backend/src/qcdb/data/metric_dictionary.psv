@@ -1,0 +1,140 @@
+fastp.read_pairs_before_filter|pairs|int|0..|Read pairs before filtering|Number of read pairs in the raw input (fastp before_filtering.total_reads / 2)
+fastp.read_pairs_after_filter|pairs|int|0..|Read pairs after filtering|Number of read pairs passing fastp filters (after_filtering.total_reads / 2)
+fastp.bases_before_filter|bp|int|0..|Bases before filtering|Total bases in both mates in the raw input (fastp before_filtering.total_bases)
+fastp.bases_after_filter|bp|int|0..|Bases after filtering|Total bases in both mates after fastp filtering
+fastp.pct_bases_after_filter|percent|float|0..100|% bases kept after filtering|Bases after filtering as a percentage of bases before filtering (base drop = 100 - this value)
+fastp.read_length|bp|float|0..|Read length (raw)|Mean of R1 and R2 mean read lengths before fastp filtering (equals cycles for untrimmed input)
+fastp.pct_reads_passed_filter|percent|float|0..100|% reads passing filter|Reads after filtering as a percentage of reads before filtering
+fastp.pct_q30_before_filter|percent|float|0..100|% bases >= Q30 (before filtering)|Percentage of bases with quality >= Q30 in the raw input
+fastp.pct_q30_after_filter|percent|float|0..100|% bases >= Q30 (after filtering)|Percentage of bases with quality >= Q30 after fastp filtering
+fastp.pct_gc_after_filter|percent|float|0..100|% GC (after filtering)|GC content of reads after fastp filtering
+fastp.pct_duplication|percent|float|0..100|% duplication|fastp duplication rate (only present when duplication evaluation is enabled)
+fastp.insert_size_peak|bp|float|0..|Insert size peak|Most frequent insert size estimated by fastp from read overlap
+fastp.mean_read_length_after_filter|bp|float|0..|Mean read length (after filtering)|Mean of R1 and R2 mean read lengths after fastp filtering
+fastp.pct_adapter_trimmed_reads|percent|float|0..100|% reads with adapter trimmed|Reads with adapter sequence trimmed, as a percentage of reads before filtering
+kraken2.n_fragments_total|fragments|int|0..|Fragments classified by Kraken2|Total fragments in the Kraken2 report (unclassified + root); a read pair counts once with --paired
+kraken2.pct_unclassified|percent|float|0..100|% unclassified|Fragments not classified by Kraken2 (taxid 0)
+kraken2.pct_classified|percent|float|0..100|% classified|Fragments classified by Kraken2 (clade count of root, taxid 1)
+kraken2.pct_human|percent|float|0..100|% human|Fragments assigned to the Homo sapiens clade (taxid 9606)
+kraken2.pct_bacteria|percent|float|0..100|% bacteria|Fragments assigned to the Bacteria clade (taxid 2)
+kraken2.pct_viruses|percent|float|0..100|% viruses|Fragments assigned to the Viruses clade (taxid 10239)
+bracken.top_species|taxon|str||Top species (Bracken)|Species with the highest Bracken re-estimated abundance
+bracken.top_species_taxid|taxid|int|0..|Top species taxid (Bracken)|NCBI taxonomy ID (Bracken taxonomy_id) of the top species
+bracken.pct_top_species|percent|float|0..100|% top species (Bracken)|Abundance of the top species among reads assigned at species level by Bracken
+bracken.second_species|taxon|str||Second species (Bracken)|Species with the second highest Bracken abundance (null if only one species)
+bracken.pct_second_species|percent|float|0..100|% second species (Bracken)|Abundance of the second species among reads assigned at species level by Bracken
+bracken.n_species_above_1pct|count|int|0..|Species above 1%|Number of species with Bracken abundance >= 1%
+bracken.shannon_index|index|float|0..|Shannon diversity index|Shannon index (natural log) over Bracken species abundances
+sylph.top_species|taxon|str||Top species (sylph-tax)|Species (s__ rank) with the highest sylph-tax relative_abundance; names follow the sylph-tax taxonomy (usually GTDB)
+sylph.pct_top_species|percent|float|0..100|% top species (sylph-tax)|relative_abundance (coverage-normalised taxonomic abundance) of the top species
+sylph.pct_top_species_reads|percent|float|0..100|% reads, top species (sylph-tax)|sequence_abundance (share of reads) of the top species
+sylph.second_species|taxon|str||Second species (sylph-tax)|Species with the second highest relative_abundance (null if only one species)
+sylph.pct_second_species|percent|float|0..100|% second species (sylph-tax)|relative_abundance of the second species (0 if only one species)
+sylph.n_species|count|int|0..|Species detected (sylph-tax)|Number of species (s__) rows in the profile
+sylph.n_species_above_1pct|count|int|0..|Species above 1% (sylph-tax)|Species with relative_abundance >= 1%
+sylph.shannon_index|index|float|0..|Shannon diversity index (sylph-tax)|Shannon index (natural log) over species relative abundances
+sylph.top_genome|genome|str||Top genome (sylph-tax)|Genome (t__) of the top species with the highest relative_abundance (null if none listed)
+sylph.top_genome_ani|percent|float|0..100|ANI of top genome (sylph-tax)|sylph ANI of top_genome, the top species' genome (t__) with the highest relative_abundance
+sylph.taxonomies_used|database|str||Taxonomy database (sylph-tax)|Taxonomy/database used by sylph-tax (Taxonomies_used from the #SampleID line); file name only for custom taxonomies, comma-separated if several
+sylph.top_genome_coverage|x|float|0..|Coverage of top genome (sylph-tax)|sylph coverage (Eff_cov or True_cov) of top_genome, the top species' genome (t__) with the highest relative_abundance
+quast.n_contigs|contigs|int|0..|Contigs (>= min contig length)|QUAST '# contigs', i.e. contigs not shorter than QUAST --min-contig (default 500 bp)
+quast.n_contigs_all|contigs|int|0..|Contigs (all lengths)|QUAST '# contigs (>= 0 bp)'
+quast.total_length|bp|int|0..|Total length (>= min contig length)|QUAST 'Total length', contigs not shorter than --min-contig
+quast.total_length_all|bp|int|0..|Total length (all contigs)|QUAST 'Total length (>= 0 bp)'
+quast.largest_contig|bp|int|0..|Largest contig|QUAST 'Largest contig'
+quast.n50|bp|int|0..|N50|QUAST 'N50'
+quast.l50|contigs|int|0..|L50|QUAST 'L50'
+quast.pct_gc|percent|float|0..100|% GC (assembly)|QUAST 'GC (%)'
+quast.n_per_100kbp|n_per_100kbp|float|0..100000|N's per 100 kbp|QUAST "# N's per 100 kbp"
+seqkit.n_contigs|contigs|int|0..|Contigs (seqkit)|seqkit num_seqs: all sequences in the assembly FASTA, no length cutoff
+seqkit.total_length|bp|int|0..|Total length (seqkit)|seqkit sum_len: total length of all sequences
+seqkit.largest_contig|bp|int|0..|Largest contig (seqkit)|seqkit max_len
+seqkit.shortest_contig|bp|int|0..|Shortest contig (seqkit)|seqkit min_len
+seqkit.mean_contig_length|bp|float|0..|Mean contig length (seqkit)|seqkit avg_len
+seqkit.n50|bp|int|0..|N50 (seqkit)|seqkit N50 (requires -a), over all sequences
+seqkit.l50|contigs|int|0..|L50 (seqkit)|seqkit N50_num (requires -a; newer seqkit versions only)
+seqkit.pct_gc|percent|float|0..100|% GC (seqkit)|seqkit GC(%) (requires -a; newer seqkit versions only)
+seqkit.n_bases|bp|int|0..|N bases (seqkit)|seqkit sum_n: number of N bases (requires -a; newer seqkit versions only)
+seqkit.n_per_100kbp|n_per_100kbp|float|0..100000|N's per 100 kbp (seqkit)|sum_n / sum_len * 100000, comparable to QUAST
+seqkit_contigs.n_contigs|contigs|int|0..|Contigs (seqkit fx2tab)|Number of sequences in the assembly FASTA
+seqkit_contigs.pct_gc_stdev|percent|float|0..100|GC standard deviation across contigs|Length-weighted standard deviation of per-contig GC (percentage points); high values hint at mixed genomes
+checkm2.pct_completeness|percent|float|0..100|% completeness (CheckM2)|CheckM2 predicted completeness
+checkm2.pct_contamination|percent|float|0..|% contamination (CheckM2)|CheckM2 predicted contamination (not bounded above by 100)
+checkm.pct_completeness|percent|float|0..100|% completeness (CheckM)|CheckM v1 lineage-specific marker completeness
+checkm.pct_contamination|percent|float|0..|% contamination (CheckM)|CheckM v1 contamination from multi-copy markers (not bounded above by 100)
+checkm.pct_strain_heterogeneity|percent|float|0..100|% strain heterogeneity (CheckM)|CheckM v1 share of multi-copy markers with high amino acid identity (likely same species)
+checkm.marker_lineage|taxon|str||Marker lineage (CheckM)|CheckM v1 lineage whose marker set was used, e.g. 'f__Enterobacteriaceae (UID5103)'
+mosdepth.reference_length|bp|int|0..|Reference length (mosdepth)|Total length of the sequences reads were mapped to (summary 'total' length)
+mosdepth.n_contigs|contigs|int|0..|Contigs (mosdepth)|Number of reference sequences in the summary
+mosdepth.aligned_bases|bp|int|0..|Aligned bases (mosdepth)|Sum of per-base depth over the reference (summary 'total' bases)
+mosdepth.mean_depth|x|float|0..|Mean depth (mosdepth)|aligned_bases / reference_length
+mosdepth.max_depth|x|int|0..|Max depth (mosdepth)|Highest per-base depth (summary 'total' max)
+mosdepth.n_contigs_zero_depth|contigs|int|0..|Contigs with no coverage (mosdepth)|Reference sequences with no mapped bases
+mosdepth.pct_bases_ge_1x|percent|float|0..100|% bases >= 1x (mosdepth)|Share of reference positions with depth >= 1 (global.dist; mosdepth rounds to whole percent)
+mosdepth.pct_bases_ge_10x|percent|float|0..100|% bases >= 10x (mosdepth)|Share of reference positions with depth >= 10 (global.dist; mosdepth rounds to whole percent)
+mosdepth.pct_bases_ge_20x|percent|float|0..100|% bases >= 20x (mosdepth)|Share of reference positions with depth >= 20 (global.dist; mosdepth rounds to whole percent)
+mosdepth.pct_bases_ge_30x|percent|float|0..100|% bases >= 30x (mosdepth)|Share of reference positions with depth >= 30 (global.dist; mosdepth rounds to whole percent)
+mosdepth.pct_bases_ge_50x|percent|float|0..100|% bases >= 50x (mosdepth)|Share of reference positions with depth >= 50 (global.dist; mosdepth rounds to whole percent)
+mosdepth.pct_bases_ge_100x|percent|float|0..100|% bases >= 100x (mosdepth)|Share of reference positions with depth >= 100 (global.dist; mosdepth rounds to whole percent)
+chewbbaca.n_loci|loci|int|0..|Loci evaluated|Number of schema loci evaluated (sum of all classes in results_statistics.tsv)
+chewbbaca.n_loci_called|loci|int|0..|Loci called|Loci with an allele call (EXC or INF)
+chewbbaca.pct_loci_called|percent|float|0..100|% loci called|Loci called as a percentage of loci evaluated
+chewbbaca.n_exc|loci|int|0..|EXC (exact match)|Loci matching a known allele (numeric or hashed identifier)
+chewbbaca.n_inf|loci|int|0..|INF (inferred new allele)|Loci with a newly inferred allele (INF-*)
+chewbbaca.n_lnf|loci|int|0..|LNF (locus not found)|Loci not found (LNF)
+chewbbaca.n_plot|loci|int|0..|PLOT (contig end)|Possible loci on the tip of a contig (PLOT3 + PLOT5)
+chewbbaca.n_lotsc|loci|int|0..|LOTSC (contig smaller than locus)|Locus on a contig shorter than the locus
+chewbbaca.n_niph|loci|int|0..|NIPH (paralogous hits)|Non-informative paralogous hits (NIPH + NIPHEM)
+chewbbaca.n_alm|loci|int|0..|ALM (allele larger than mode)|Allele larger than the locus length mode
+chewbbaca.n_asm|loci|int|0..|ASM (allele smaller than mode)|Allele smaller than the locus length mode
+chewbbaca.n_pama|loci|int|0..|PAMA (paralogous matches)|Paralogous matches to several loci
+chewbbaca.n_missing|loci|int|0..|Missing loci|Loci without an allele call: LNF + PLOT3 + PLOT5 + LOTSC + NIPH + NIPHEM + ALM + ASM + PAMA (= n_loci - n_loci_called)
+chewbbaca.n_cds_total|cds|int|0..|CDSs predicted|Total CDSs predicted in the genome (results_statistics.tsv Total_CDSs)
+chewbbaca.n_cds_classified|cds|int|0..|CDSs classified|CDSs classified against the schema, non-LNF (results_statistics.tsv Classified_CDSs)
+chewbbaca.n_cds_invalid|cds|int|0..|Invalid CDSs|Invalid CDSs (results_statistics.tsv 'Invalid CDSs')
+mlst.scheme|scheme|str||MLST scheme|mlst scheme name (PubMLST), null when no scheme matched
+mlst.sequence_type|st|str||Sequence type (MLST)|MLST sequence type as reported by mlst; null when no ST was assigned
+mlst.n_alleles_exact|loci|int|0..|Exact alleles (MLST)|Loci with an exact allele match
+mlst.n_alleles_novel|loci|int|0..|Novel alleles (MLST)|Loci with a novel full-length allele (~n)
+mlst.n_alleles_partial|loci|int|0..|Partial alleles (MLST)|Loci with a partial match (n?)
+mlst.n_alleles_missing|loci|int|0..|Missing alleles (MLST)|Loci not found (-)
+mlst.n_alleles_multiple|loci|int|0..|Multi-copy alleles (MLST)|Loci with several alleles (n,m)
+seqsero2.serotype|serotype|str||Serotype (SeqSero2)|SeqSero2 predicted serotype; null when not predicted
+seqsero2.antigenic_profile|antigen|str||Antigenic profile (SeqSero2)|SeqSero2 predicted antigenic formula O:H1:H2
+seqsero2.o_antigen|antigen|str||O antigen (SeqSero2)|SeqSero2 O antigen prediction
+seqsero2.h1_antigen|antigen|str||H1 antigen (SeqSero2)|SeqSero2 H1 antigen prediction (fliC)
+seqsero2.h2_antigen|antigen|str||H2 antigen (SeqSero2)|SeqSero2 H2 antigen prediction (fljB)
+seqsero2.predicted_identification|taxon|str||Identification (SeqSero2)|SeqSero2 predicted identification (species/subspecies; newer versions only)
+ectyper.serotype|serotype|str||Serotype (ECTyper)|ECTyper predicted E. coli serotype O:H; null when neither O nor H was typed
+ectyper.o_antigen|antigen|str||O antigen (ECTyper)|ECTyper O-type; null when not determined (-)
+ectyper.h_antigen|antigen|str||H antigen (ECTyper)|ECTyper H-type; null when not determined (-)
+ectyper.species|taxon|str||Species (ECTyper)|ECTyper species verification (--verify); absent when not run (-)
+ectyper.qc|flag|str||Typing QC (ECTyper)|ECTyper QC flag, e.g. PASS (REPORTABLE); absent when not reported (-)
+ectyper.n_genes|genes|int|0..|Typing genes (ECTyper)|Number of O/H antigen gene alleles the prediction is based on
+ectyper.min_pct_identity|percent|float|0..100|Lowest gene identity (ECTyper)|Lowest % identity among the typing gene alleles; absent without genes
+ectyper.min_pct_coverage|percent|float|0..100|Lowest gene coverage (ECTyper)|Lowest % coverage among the typing gene alleles; absent without genes
+amrfinder.n_amr_genes|genes|int|0..|AMR genes|AMRFinderPlus hits of type AMR, excluding point mutations
+amrfinder.n_point_mutations|mutations|int|0..|AMR point mutations|AMRFinderPlus hits of type AMR with subtype POINT*
+amrfinder.n_amr_classes|classes|int|0..|AMR drug classes|Distinct drug classes among AMR hits (multi-class entries split on '/')
+amrfinder.n_stress|genes|int|0..|Stress genes|AMRFinderPlus hits of type STRESS (biocide, metal, heat, acid; requires --plus)
+amrfinder.n_virulence|genes|int|0..|Virulence genes|AMRFinderPlus hits of type VIRULENCE (requires --plus)
+abricate_plasmidfinder.n_hits|hits|int|0..|PlasmidFinder hits|ABRicate hits against PlasmidFinder (one row of the report each)
+abricate_plasmidfinder.n_genes|genes|int|0..|Plasmid replicons (PlasmidFinder)|Distinct plasmid replicons (GENE) found by ABRicate in PlasmidFinder
+abricate_plasmidfinder.n_contigs|contigs|int|0..|Contigs with PlasmidFinder hits|Distinct contigs carrying at least one PlasmidFinder hit
+abricate_plasmidfinder.min_pct_identity|percent|float|0..100|Lowest identity (PlasmidFinder)|Lowest %IDENTITY among PlasmidFinder hits (absent without hits)
+abricate_plasmidfinder.min_pct_coverage|percent|float|0..100|Lowest coverage (PlasmidFinder)|Lowest %COVERAGE among PlasmidFinder hits (absent without hits)
+abricate_vfdb.n_hits|hits|int|0..|VFDB hits|ABRicate hits against VFDB (one row of the report each)
+abricate_vfdb.n_genes|genes|int|0..|Virulence genes (VFDB)|Distinct virulence genes (GENE) found by ABRicate in VFDB
+abricate_vfdb.n_contigs|contigs|int|0..|Contigs with VFDB hits|Distinct contigs carrying at least one VFDB hit
+abricate_vfdb.min_pct_identity|percent|float|0..100|Lowest identity (VFDB)|Lowest %IDENTITY among VFDB hits (absent without hits)
+abricate_vfdb.min_pct_coverage|percent|float|0..100|Lowest coverage (VFDB)|Lowest %COVERAGE among VFDB hits (absent without hits)
+abricate_resfinder.n_hits|hits|int|0..|ResFinder hits|ABRicate hits against ResFinder (one row of the report each)
+abricate_resfinder.n_genes|genes|int|0..|Resistance genes (ResFinder)|Distinct resistance genes (GENE) found by ABRicate in ResFinder
+abricate_resfinder.n_contigs|contigs|int|0..|Contigs with ResFinder hits|Distinct contigs carrying at least one ResFinder hit
+abricate_resfinder.min_pct_identity|percent|float|0..100|Lowest identity (ResFinder)|Lowest %IDENTITY among ResFinder hits (absent without hits)
+abricate_resfinder.min_pct_coverage|percent|float|0..100|Lowest coverage (ResFinder)|Lowest %COVERAGE among ResFinder hits (absent without hits)
+abricate_ncbi.n_hits|hits|int|0..|NCBI (ABRicate) hits|ABRicate hits against NCBI (ABRicate) (one row of the report each)
+abricate_ncbi.n_genes|genes|int|0..|Resistance genes (NCBI (ABRicate))|Distinct resistance genes (GENE) found by ABRicate in NCBI (ABRicate)
+abricate_ncbi.n_contigs|contigs|int|0..|Contigs with NCBI (ABRicate) hits|Distinct contigs carrying at least one NCBI (ABRicate) hit
+abricate_ncbi.min_pct_identity|percent|float|0..100|Lowest identity (NCBI (ABRicate))|Lowest %IDENTITY among NCBI (ABRicate) hits (absent without hits)
+abricate_ncbi.min_pct_coverage|percent|float|0..100|Lowest coverage (NCBI (ABRicate))|Lowest %COVERAGE among NCBI (ABRicate) hits (absent without hits)
