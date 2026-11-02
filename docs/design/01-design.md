@@ -1,6 +1,7 @@
 # qcdb — Stage 1 design (for approval)
 
-Status: **DRAFT, awaiting approval.** No application code has been written. This document
+Status: **DRAFT v2. Answers to the questions are recorded in §13 (2026-11-02); awaiting final
+approval.** No application code has been written. This document
 covers the data model, the screens, the stage plan, the design decisions I need you to approve,
 and the questions from the brief. Items marked **[Q#]** or **[D#]** stay open until you answer.
 
@@ -44,7 +45,9 @@ spec/               verbatim reference copies from the brief (read-only)
 ```mermaid
 erDiagram
     owner ||--o{ sample_order : commissions
-    sample_order ||--o{ sample : contains
+    sample_order ||--o{ order_sample : contains
+    sample ||--o{ order_sample : "belongs to"
+    sample_field_definition ||--o{ sample : "describes metadata of"
     sample ||--o{ sample_run : "sequenced as"
     run ||--o{ sample_run : contains
     run ||--o{ run_membership : lists
@@ -65,8 +68,7 @@ erDiagram
 
 ### 2.2 DDL (draft, PostgreSQL 16)
 
-Fields marked `-- [Q1]` / `-- [Q2]` are **not** decided. I list no candidate columns as if they
-were agreed; they are added only after you answer.
+Owner fields and sample metadata follow the answers to Q1 and Q2 (§13).
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_trgm;   -- substring search (see §2.6)
@@ -106,31 +108,57 @@ CREATE TABLE metric_label (                          -- Polish (and future) labe
 );
 
 -------------------------------------------------------------------- people, orders, samples
-CREATE TABLE owner (                                 -- person who commissioned the analysis
+CREATE TABLE owner (                                 -- natural person who commissioned the analysis
     id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    -- [Q1] personal fields to be confirmed; each tagged "identity" (viewer sees it)
-    --      or "contact" (hidden from viewer)
+    full_name   text,                                -- identity: visible to all roles
+    email       text,                                -- contact: hidden from viewer; optional
     created_at  timestamptz NOT NULL DEFAULT now(),
     updated_at  timestamptz NOT NULL DEFAULT now(),
-    erased_at   timestamptz                           -- [Q6] set when personal data is erased
+    erased_at   timestamptz,                         -- pseudonymised (Q6)
+    CHECK ((erased_at IS NULL) = (full_name IS NOT NULL)),   -- name required until erasure
+    CHECK (erased_at IS NULL OR email IS NULL)
 );
 
 CREATE TABLE sample_order (                          -- "order" is a reserved word
     id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     order_code  text NOT NULL UNIQUE,                -- free string, e.g. 'ZL/2026/001'
-    owner_id    bigint REFERENCES owner(id),         -- NULL = not yet assigned (order.json import)
+    owner_id    bigint REFERENCES owner(id),         -- exactly one owner; NULL = not yet assigned
     meta        jsonb,                               -- verbatim order.json "meta", never parsed
     created_at  timestamptz NOT NULL DEFAULT now(),
     updated_at  timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE sample (                                -- biological sample, confirmed metadata
+CREATE TABLE sample_field_definition (             -- admin-configurable metadata fields (Q2)
     id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    sample_code text NOT NULL,                       -- [Q9] uniqueness depends on your answer
-    order_id    bigint REFERENCES sample_order(id),  -- [Q4] 1 order per sample, or a link table
-    -- [Q2] confirmed metadata columns (typed, nullable or NOT NULL as you decide)
+    key         text NOT NULL UNIQUE CHECK (key ~ '^[a-z][a-z0-9_]*$'),  -- immutable once created
+    label       text NOT NULL,                       -- Polish label shown in the UI
+    data_type   text NOT NULL CHECK (data_type IN ('text','number','date','choice')),
+    choices     text[],                              -- allowed values for 'choice'
+    required    boolean NOT NULL DEFAULT false,
+    ordinal     integer NOT NULL,
+    is_active   boolean NOT NULL DEFAULT true,       -- deactivated, never deleted
+    created_at  timestamptz NOT NULL DEFAULT now(),
+    CHECK ((data_type = 'choice') = (choices IS NOT NULL))
+);
+-- Seeded (all optional until an admin changes it): material_type "Rodzaj materiału",
+-- collection_site "Źródło / miejsce pobrania", collection_date "Data pobrania" (date),
+-- expected_species "Oczekiwany gatunek".
+
+CREATE TABLE sample (                                -- biological sample with confirmed metadata
+    id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    sample_code text NOT NULL,                       -- NOT unique: unrelated samples may share 'S01' (Q9)
+    metadata    jsonb NOT NULL DEFAULT '{}',         -- {field key: value}, validated by API/import
+                                                     -- against sample_field_definition
     created_at  timestamptz NOT NULL DEFAULT now(),
     updated_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE order_sample (                          -- a sample can belong to several orders (Q4)
+    order_id    bigint NOT NULL REFERENCES sample_order(id),
+    sample_id   bigint NOT NULL REFERENCES sample(id),
+    source      text   NOT NULL CHECK (source IN ('ui','order_json','metadata')),
+    linked_at   timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (order_id, sample_id)
 );
 
 -------------------------------------------------------------------- loads and raw documents
@@ -180,7 +208,7 @@ CREATE TABLE sample_run (                            -- result key (run_id, samp
     id                 bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     run_id             bigint NOT NULL REFERENCES run(id),
     sample_code        text   NOT NULL,              -- sample_id exactly as in the documents
-    sample_id          bigint REFERENCES sample(id), -- link to biological sample [Q9]
+    sample_id          bigint REFERENCES sample(id), -- auto-linked by sample_code, correctable in UI
     current_version_id bigint,                       -- FK below; NULL = known sample, no results
     created_at         timestamptz NOT NULL DEFAULT now(),
     UNIQUE (run_id, sample_code)
@@ -429,7 +457,8 @@ in §8).
 | Index | Serves |
 |---|---|
 | `sample_run (run_id, sample_code)` unique | result key lookup during load; Run screen |
-| `sample_run (sample_id)`, `sample (order_id)`, `sample_order (owner_id)` | owner/order filters, Owners & orders screen |
+| `sample_run (sample_id)`, `order_sample (sample_id)`, `sample_order (owner_id)`, `sample (sample_code)` | owner/order filters, auto-linking, Owners & orders screen |
+| GIN on `sample.metadata` | filtering by configurable metadata fields |
 | `result_version (sample_run_id, version_no)` unique | history list |
 | `tool_result (version_id, tool)` unique | sample detail, per-tool lookup |
 | `metric_value (metric_key, tool_result_id) INCLUDE (value_num)` | **trends**: one metric across all results, index-only scan |
@@ -770,3 +799,34 @@ Additional questions raised by the design:
 14. **CSV export dialect:** Excel-friendly for Polish locale (`;` separator, decimal comma, UTF-8 BOM,
     Polish headers), or machine-friendly (`,`, decimal point, metric keys as headers)? My
     recommendation: machine-friendly, with column keys plus a second header row of PL labels and units.
+
+---
+
+## 13. Answers (2026-11-02) and resulting changes
+
+These answers take precedence over anything earlier in the document that conflicts with them. The DDL in §2.2
+has been updated.
+
+| # | Answer | Effect on the design |
+|---|---|---|
+| Q1 | Owner = always a natural person; fields: full name (required), e-mail (optional, contact) | `owner.full_name`, `owner.email`; no organisation field. `meta` values such as "Szpital Wojewódzki" stay verbatim in JSONB only |
+| Q2 | Material type, source/collection site, collection date, expected species, **and the fields must be configurable** | `sample_field_definition` (admin: key, PL label, type text/number/date/choice, choices, required, order, active) + `sample.metadata` JSONB; the 4 fields are seeded as optional; no migrations for new fields; changes audited. "Required" is enforced when metadata is saved in the UI/import; samples auto-created by the loader are shown as "metadane niekompletne" |
+| Q3 | UI form + CSV import | `--metadata FILE`: CSV with `sample_id`, optional `run_id`, `run_date`, `order_id`, plus one column per field key; unknown columns → error |
+| Q4 | A sample can belong to **several orders**; each order has exactly one owner; `order_id` = the one in order reports | `order_sample` link table; owner filter = any of the sample's orders |
+| Q5 | Newest becomes current, manual change possible | `set_current` endpoint (bioinformatician, audited) |
+| Q6 | Pseudonymisation | erase = clear name/e-mail, set `erased_at`; orders/results kept as "Zleceniodawca #id" |
+| Q7 | 1 000–10  000 samples/year, ≤ 20 users | materialized view kept (D2) |
+| Q8 | Maybe in the future | not built; nothing in the model blocks a later `app_user → owner` link |
+| Q9 | Auto-link by sample_id, correctable in UI | the loader links `sample_run` to the sample with the same `sample_code`, creating one if none exists. If several samples share the code, it doesn't link and warns. Bioinformaticians can re-link (audited) |
+| Q10 | Mapping as proposed | §2.5 as written; run.json cross-check warnings |
+| Q11 | Both filters | sample table: AMR gene/class; species in Bracken composition ≥ x % |
+| Q12 | By name | `samplesheet*.csv` / `samplesheet*.tsv`, case-insensitive |
+| Q13 | Pipeline on another host, self-signed certificates | Postgres `ssl=on`, `pg_hba` `hostssl` for `qcdb_loader` from the pipeline host only, `sslmode=verify-full` with a lab-generated self-signed CA; README covers generating the CA, server certificates for nginx and Postgres |
+| Q14 | Machine-readable + PL label row | `,`, decimal point, UTF-8; row 1 = column keys, row 2 = PL label [unit] |
+| D1 | Complete set per load | as in §2.4 |
+| D2, D10, D9, D11, D12 | accepted | — |
+| D4 | "as float" | integral-valued numbers written as `252.0` are **accepted** for `int` metrics and stored exactly as given (`numeric 252.0`); non-integral values (`252.5`) are still rejected. *Interpretation, to be confirmed.* |
+| D5 | Creates missing orders, only adds links | order.json creates missing orders (without owner) and adds `order_sample` links; never removes links |
+| D6 | 2 > 1 > 3 | usage error 2; otherwise any rejected document/sample → 1; otherwise unreadable file → 3; warnings → 0 |
+| D7 | File in repository | `metric_labels.pl.psv` + `qcdb import-dictionary --labels pl` |
+| D8 | Paths masked to basename for viewer | as proposed |
